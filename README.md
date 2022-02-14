@@ -1,6 +1,6 @@
 # vue-newsletter
 
-<b>WARNING</b> starting from november 2021 Swiftmailer will no longer be maintained. Currently working on changing the mail handling part with <a href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a><br>.
+<b>WARNING</b> starting from november 2021 Swiftmailer will no longer be maintained. Currently working on changing the mail handling part with <a href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>.<br>
 
 This is a simple vue3 project with some php as backend, the focus is to mimic an admin panel and being able to handle the main to a list of user saved in a database.<br>
 
