@@ -2,48 +2,12 @@
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Max-Age: 3628800');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');    
-require('C:\xampp\htdocs\test\vendor\autoload.php');
 
-$name = "Undefined name";
-
-
-
-// Allow from any origin
 /*
-     if(isset($_SERVER["HTTP_ORIGIN"]))
-     {
-        // You can decide if the origin in $_SERVER['HTTP_ORIGIN'] is something you want to  allow, or as we do here, just allow all
-        header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
-     }
-     else
-     {
-        //No HTTP_ORIGIN set, so we allow any. You can disallow if needed here
-        header("Access-Control-Allow-Origin: *");
-     }
-
-     header("Access-Control-Allow-Credentials: true");
-     header("Access-Control-Max-Age: 600");    // cache for 10 minutes
-
-     if($_SERVER["REQUEST_METHOD"] == "OPTIONS")
-     {
-        if (isset($_SERVER["HTTP_ACCESS_CONTROL_REQUEST_METHOD"]))
-            header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT"); 
-  //Make  sure you remove those you do not want to support
-
-        if (isset($_SERVER["HTTP_ACCESS_CONTROL_REQUEST_HEADERS"]))
-            header("Access-Control-Allow-Headers: 
-           {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
-
-           //Just exit with 200 OK with the above headers for OPTIONS method
-        exit(0);
-      }*/
-      //print_r($_POST);
-      /*
-      foreach($_POST as $key=>$value)
-{
-  echo "$key";
-}*/
-
+sending mail is possible thanks to the Swiftmailer library
+you will need to install Swiftmailer wiht composer to being able to use this php page
+after you install the library you will have to import autoload.php to this page
+*/
 
 if($_SERVER['REQUEST_METHOD'] == "POST" and !empty($_POST)){
    send();
@@ -55,7 +19,7 @@ function send(){
    ini_set('display_errors', '1');
    
 
-   //accesso al database
+   //acess to you db containing the user info
    $host = "localhost"; 
    $user = "root"; 
    $password = ""; 
@@ -82,43 +46,42 @@ function send(){
 
 
 
-	// crea un oggetto della classe Transport
-	$transport = (new Swift_SmtpTransport('smtp.libero.it', 465, 'ssl'))
-	  ->setUsername('mikiviv@libero.it')
-	  //->setPassword('55lv1,618033LS21')
-	              //vecchia password?'21l50V1,61803'
-		->setPassword('51121292123');
+	// create an transport object
+	$transport = (new Swift_SmtpTransport('yourdomainsmtpaddress', #ofportneeded, 'typeofencryption'))
+	  ->setUsername('youemailaddress@domain.aaa')
+	  ->setPassword('youemailaddresspasswordcasesentitive');
 	;	
 	
-	// inizializza un mailer che spedirà il messaggio mediante il trasporto
+	// initialize a mailer transport
 	$mailer = new Swift_Mailer($transport);
 	
-	// crea il messaggio
+	// create the message
 	$message = new Swift_Message();
 	
-	//inizializza gli headers per 
+	// initialize the message headers
 	$headers = $message->getHeaders();
 	
    
-	//imposta l'oggetto della mail
+	//set the object of the mail with the one written by the admin
 	$message->setSubject($_POST['object']);
-	//imposta chi spedisce la mail
-	$message->setFrom(['mikiviv@libero.it' => 'Michele Viviani']);//impostare indirizzo mail del dominio
+	//set the addredd which is sendind the mail
+	$message->setFrom(['senderaddress@domain.aaa' => 'nameofthesender']);
 	
-   echo "invio in corso...<br>";
+   echo "sending...<br>";
 	
-	//imposta un limite antiflood, pausa l'invio dopo 30 mail e attendi 60 secondi prima di continuare l'invio
+	//initialize an antiflood, stop the script for 60 seconds after sending 30 message and the restart
 	$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(30, 60));
-	//imposta un limite al throttle, rateo massimo di invio dei messaggi 60 al minuto
+	//set how many messages you can send in a minute
 	$mailer->registerPlugin(new Swift_Plugins_ThrottlerPlugin(60, Swift_Plugins_ThrottlerPlugin::MESSAGES_PER_MINUTE));
 	
-	//crea le variabili che comprendono i vari elementi dell'anteprima
+	//set the mail text with the markup text written by the admin
 	$testo_newsletter = $_POST['input']; 
-
+ 	
+   //enter the db to fetch the user info, in this case the db was a MySQL db
    if (mysqli_num_rows($result) > 0) {
    
       while($rowData = mysqli_fetch_array($result)){
-           //echo $rowData["name"].$rowData["email"];
+           
            $message->setTo([$rowData["email"] => $rowData["name"]]);
 
            $message->setBody(
@@ -129,12 +92,12 @@ function send(){
                  <body>' .$testo_newsletter .'
                  </body>
                </html>',
-                'text/html', //imposta la mail come pagina html
-                'utf-8'	//utilizza questa codifica di caratteri	 
+                'text/html', //set the mail text as an HTML page
+                'utf-8'	//char codification	 
            );
-           
+           //if there are attachment add those to the mail
            if($_POST['attachment']!==""){
-               $message->attach(Swift_Attachment::fromPath('http://localhost/test/vue-newsletter/upload/'.$_POST['attachment']));
+               $message->attach(Swift_Attachment::fromPath('upload/'.$_POST['attachment']));
             }
            $result = $mailer->send($message);
            
@@ -142,11 +105,11 @@ function send(){
            
            if($result==0){
                 
-              echo "invio non riuscito <br>";
+              echo "Email sent<br>";
               
            }else{
               
-              echo "invio effettuato <br>";
+              echo "Email not sent <br>";
              
            }//if-else
       }
