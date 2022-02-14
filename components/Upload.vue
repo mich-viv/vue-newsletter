@@ -27,7 +27,7 @@ export default {
             let formData = new FormData();
             
             formData.append('file', this.file);
-            axios.post('http://localhost/test/vue-newsletter/upload.php', formData, {
+            axios.post('backend/upload.php', formData, {
                 headers: {'Content-Type': 'multipart/form-data'}
             }).then(function(data){
             
