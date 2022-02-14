@@ -58,7 +58,7 @@ export default {
       },
       onSubmit(e) {
           e.preventDefault();
-          axios.post("http://localhost/test/vue-newsletter/mail.php",querystring.stringify(this.form)).then(res => {
+          axios.post("backend/mail.php",querystring.stringify(this.form)).then(res => {
             console.log(res);
           });
       }
