@@ -35,7 +35,7 @@ export default {
 
         getFile: function(){
             
-            axios.post('http://localhost/test/vue-newsletter/attachment.php').then(res =>{
+            axios.post('backend/attachment.php').then(res =>{
 
                 let txt=res.data.split("~~~");
 
