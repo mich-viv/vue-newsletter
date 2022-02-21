@@ -76,7 +76,7 @@ function send(){
 			    $mail->Body    = $_POST['input'];
 
 		    if($_POST['attachment']!==""){
-		       $mail->addAttachment('http://localhost/test/vue-newsletter/upload/'.$_POST['attachment']);
+		       $mail->addAttachment('upload/'.$_POST['attachment']);
 		    }
 		    $mail->send();
            
