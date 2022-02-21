@@ -1,7 +1,7 @@
 # vue-newsletter
 
 
-<b>21/02 Update<:/b> added a new mail file updated with PHPmailer instead of Swiftmailer.<br>
+<b>21/02 Update:</b> added a new mail file updated with PHPmailer instead of Swiftmailer.<br>
 
 <b>WARNING</b> starting from november 2021 Swiftmailer will no longer be maintained. Currently working on changing the mail handling part with <a href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a>.<br>
 
