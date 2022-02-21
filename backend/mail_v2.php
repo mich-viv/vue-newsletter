@@ -2,48 +2,15 @@
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Max-Age: 3628800');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');    
-require('C:\xampp\htdocs\test\vendor\autoload.php');
+require('vendor\autoload.php');
 
 $name = "Undefined name";
 
-
-
-// Allow from any origin
 /*
-     if(isset($_SERVER["HTTP_ORIGIN"]))
-     {
-        // You can decide if the origin in $_SERVER['HTTP_ORIGIN'] is something you want to  allow, or as we do here, just allow all
-        header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
-     }
-     else
-     {
-        //No HTTP_ORIGIN set, so we allow any. You can disallow if needed here
-        header("Access-Control-Allow-Origin: *");
-     }
-
-     header("Access-Control-Allow-Credentials: true");
-     header("Access-Control-Max-Age: 600");    // cache for 10 minutes
-
-     if($_SERVER["REQUEST_METHOD"] == "OPTIONS")
-     {
-        if (isset($_SERVER["HTTP_ACCESS_CONTROL_REQUEST_METHOD"]))
-            header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT"); 
-  //Make  sure you remove those you do not want to support
-
-        if (isset($_SERVER["HTTP_ACCESS_CONTROL_REQUEST_HEADERS"]))
-            header("Access-Control-Allow-Headers: 
-           {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
-
-           //Just exit with 200 OK with the above headers for OPTIONS method
-        exit(0);
-      }*/
-      //print_r($_POST);
-      /*
-      foreach($_POST as $key=>$value)
-{
-  echo "$key";
-}*/      
-
+This is an updated version of the previous mail.php file,
+new the sending of message is done by the PHPmailer library.
+To use the library the user need to install first the library with composer and the import the autoload.php file here.
+*/
 
 if($_SERVER['REQUEST_METHOD'] == "POST" and !empty($_POST)){
    send();
@@ -55,7 +22,7 @@ function send(){
    ini_set('display_errors', '1');
    
 
-   //accesso al database
+   //db access
    $host = "localhost"; 
    $user = "root"; 
    $password = ""; 
@@ -94,34 +61,33 @@ function send(){
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
     $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 	
-	//Recipients
+    //Recipients
     $mail->setFrom('yourmailaddress@domain.aaa', 'name of the admin');//sender
 	
 	if (mysqli_num_rows($result) > 0) {
 	
-		while($rowData = mysqli_fetch_array($result)){
+	    while($rowData = mysqli_fetch_array($result)){
             
-            $mail->addAddress([$rowData["email"] => $rowData["name"]]);
+		    $mail->addAddress([$rowData["email"] => $rowData["name"]]);
 
-            //Content of the message for each user in the db
-		    $mail->isHTML(true);//Set email format to HTML
-		    $mail->Subject = $_POST['object'];
-		    $mail->Body    = $_POST['input'];
+		    //Content of the message for each user in the db
+			    $mail->isHTML(true);//Set email format to HTML
+			    $mail->Subject = $_POST['object'];
+			    $mail->Body    = $_POST['input'];
+
+		    if($_POST['attachment']!==""){
+		       $mail->addAttachment('http://localhost/test/vue-newsletter/upload/'.$_POST['attachment']);
+		    }
+		    $mail->send();
            
-            if($_POST['attachment']!==""){
-               $mail->addAttachment('http://localhost/test/vue-newsletter/upload/'.$_POST['attachment']);
-            }
-            $mail->send();
-           
-           
-        }
+             }
 	
 	}
 
 
-		echo 'Message has been sent';
+	    echo 'Message has been sent';
 	} catch (Exception $e) {
-		echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+	    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 	}
 	
 
